@@ -74,6 +74,12 @@ Contributors
 
 -  Simone Orsi simone.orsi@camptocamp.com
 
+Funders
+-------
+
+The development of this module has been financially supported by: `Fluxdock.io <https://fluxdock.io>`_.
+
+
 Maintainer
 ----------
 
