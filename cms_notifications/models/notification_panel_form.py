@@ -85,12 +85,20 @@ class CMSNotificationPanel(models.AbstractModel):
     def _form_load_subtype_conf_loader(
             self, form, main_object, fname, value, **req_values):
         """Automatically load value for subtype conf fields."""
-        if 'enable_matches' in req_values:
+        if fname in req_values:
             value = form_to_bool(self, fname, value, **req_values)
         else:
             subtype = self.env.ref(self._form_subtype_fields[fname])
-            value = \
+            explicitly_enabled = \
                 subtype in self.main_object.enabled_notify_subtype_ids
+            explicitly_disabled = \
+                subtype in self.main_object.disabled_notify_subtype_ids
+            # mail_digest machinery will send you emails in this 2 cases:
+            # * you've enabled notification explicitly
+            # * you have no specific settings for the subtype
+            # (hence you did not disabled it)
+            value = explicitly_enabled or not explicitly_disabled
+
         return value
 
     def form_after_create_or_update(self, values, extra_values):
