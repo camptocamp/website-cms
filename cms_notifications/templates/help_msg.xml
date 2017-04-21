@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="notify_email_help" name="CMS notifications form - notify_email help">
+    <span>Policy to receive emails:</span><br />
+    <ul>
+        <li><strong>Never:</strong> no emails are sent</li>
+        <li><strong>All Messages:</strong> for every notification you receive</li>
+        <li><strong>Digest:</strong> you will receive a summary of the notifications in the chosen frequency</li>
+    </ul>
+  </template>
+
+</odoo>

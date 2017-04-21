@@ -14,5 +14,6 @@
     ],
     'data': [
         'views/mail_message_subtype_views.xml',
+        'templates/help_msg.xml',
     ],
 }
