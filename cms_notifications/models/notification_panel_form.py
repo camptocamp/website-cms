@@ -6,18 +6,6 @@ from openerp import models, _
 from openerp.addons.cms_form.utils import form_to_bool
 
 
-def master_slave_rules(fname):
-    """Return master slave rules for `digest` dependent fields."""
-    return {
-        'hide': {
-            fname: ('never', 'always', 'none', ),
-        },
-        'show': {
-            fname: ('digest', ),
-        }
-    }
-
-
 class CMSNotificationPanel(models.AbstractModel):
     """Hold users notifications settings."""
     _name = 'cms.notification.panel.form'
@@ -49,10 +37,28 @@ class CMSNotificationPanel(models.AbstractModel):
     def _super(self):
         return super(CMSNotificationPanel, self)
 
+    def form_update_fields_attributes(self, _fields):
+        """Override to add help messages."""
+        self._super.form_update_fields_attributes(_fields)
+
+        help_tmpl = self.env.ref(
+            'cms_notifications.notify_email_help',
+            raise_if_not_found=False)
+        _fields['notify_email']['help'] = help_tmpl.render({
+            'form_field': _fields['notify_email'],
+        })
+
     def _form_master_slave_info(self):
         info = self._super._form_master_slave_info()
         info.update({
-            'notify_email': master_slave_rules('notify_frequency'),
+            'notify_email': {
+                'hide': {
+                    'notify_frequency': ('always', 'none', ),
+                },
+                'show': {
+                    'notify_frequency': ('digest', ),
+                },
+            },
         })
         return info
 
