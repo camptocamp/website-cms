@@ -20,7 +20,7 @@ msgstr ""
 #. module: cms_notifications
 #: model:ir.ui.view,arch_db:cms_notifications.notify_email_help
 msgid "<span>Policy to receive emails:</span><br/>"
-msgstr "<span>Policy to receive emails:</span><br/>"
+msgstr "<span>Regeln zum Email-Versand:</span><br/>"
 
 #. module: cms_notifications
 #: model:ir.ui.view,arch_db:cms_notifications.notify_email_help
@@ -35,7 +35,7 @@ msgstr "<strong>Übersicht:</strong> Sie erhalten eine Übersicht aller Benachri
 #. module: cms_notifications
 #: model:ir.ui.view,arch_db:cms_notifications.notify_email_help
 msgid "<strong>Never:</strong> no emails are sent"
-msgstr "<strong>Niemals:</strong> no emails are sent"
+msgstr "<strong>Niemals:</strong> Sie erhalten keine Emails"
 
 #. module: cms_notifications
 #: model:ir.model,name:cms_notifications.model_cms_notification_panel_form
@@ -68,7 +68,7 @@ msgstr "Angezeigter Name"
 #. module: cms_notifications
 #: model:ir.model.fields,field_description:cms_notifications.field_partner_notification_conf_enabled
 msgid "Enabled"
-msgstr "Enabled"
+msgstr "Aktivieren"
 
 #. module: cms_notifications
 #: model:ir.model.fields,field_description:cms_notifications.field_cms_notification_panel_form_id
@@ -107,7 +107,7 @@ msgstr "Nachrichten-Subtyp"
 #: code:addons/odoo/external-src/website-cms/cms_notifications/models/notification_panel_form.py:23
 #, python-format
 msgid "Notification settings."
-msgstr "Notification settings."
+msgstr "Benachrichtigungseinstellungen."
 
 #. module: cms_notifications
 #: model:ir.model.fields,field_description:cms_notifications.field_partner_notification_conf_subtype_id
