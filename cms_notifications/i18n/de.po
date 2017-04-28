@@ -25,7 +25,7 @@ msgstr "<span>Regeln zum Email-Versand:</span><br/>"
 #. module: cms_notifications
 #: model:ir.ui.view,arch_db:cms_notifications.notify_email_help
 msgid "<strong>All Messages:</strong> for every notification you receive"
-msgstr "<strong>Benachrichtigunen:</strong> Sie erhalten eine Übersicht aller Benachrichtigungen entsprechend der gewählten Häufigkeit"
+msgstr "<strong>Benachrichtigunen:</strong> Sie erhalten eine Email für jede Benachrichtigung"
 
 #. module: cms_notifications
 #: model:ir.ui.view,arch_db:cms_notifications.notify_email_help
