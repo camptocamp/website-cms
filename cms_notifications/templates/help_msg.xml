@@ -10,7 +10,7 @@
   </template>
 
   <template id="notify_email_help_none" name="CMS notifications form - notify_email help `never`">
-    <p>I don't want to get notification emails by Fluxdock.</p>
+    <p>I don't want to get notification emails.</p>
   </template>
 
 </odoo>
