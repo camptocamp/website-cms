@@ -35,6 +35,7 @@ class CMSNotificationListing(models.AbstractModel):
         domain = self._super.form_search_domain(search_values)
         default_domain = [
             ('partner_ids', 'in', [self.env.user.partner_id.id, ]),
+            ('subtype_id.cms_type', '=', True),
         ]
         domain.extend(default_domain)
         return domain
