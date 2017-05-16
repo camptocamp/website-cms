@@ -18,22 +18,6 @@ Manage notifications in your CMS. Provides:
 Depends on `mail_digest [WIP PR] <https://github.com/camptocamp/social/tree/add-mail_digest/mail_digest>`_
 and `cms_form [WIP PR] <https://github.com/simahawk/website-cms/tree/add-cms_form-PR/cms_form>`_.
 
-Usage
------
-
-To bring the user to her/his panel:
-
-.. code:: html
-
-    <a class="btn btn-default" href="/my/settings/notifications">Notifications</a>
-
-
-To bring the user to her/his notifications:
-
-.. code:: html
-
-    <a class="btn btn-default" href="/my/notifications">Notification settings</a>
-
 
 Default appearance
 ------------------
@@ -75,6 +59,23 @@ subtypes.
                 'enable_my_type2': 'module.mt_mytype2',
             })
             return res
+
+            Usage
+            -----
+
+
+To bring the user to her/his panel:
+
+.. code:: html
+
+    <a class="btn btn-default" href="/my/settings/notifications">Notifications</a>
+
+
+To bring the user to her/his notifications:
+
+.. code:: html
+
+    <a class="btn btn-default" href="/my/notifications">Notification settings</a>
 
 
 Bug Tracker

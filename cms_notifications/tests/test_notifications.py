@@ -63,14 +63,16 @@ class CMSNotificationCase(TransactionCase):
         form = self.get_form(main_object=self.partner1)
         defaults = form.form_load_defaults()
         expected = dict(
-            enable_1=False,
-            enable_2=False,
-            enable_3=False,
+            # not specific record for disabling: all ON
+            enable_1=True,
+            enable_2=True,
+            enable_3=True,
         )
         self._assert_values(expected, defaults)
 
         self.partner1._notify_enable_subtype(self.subtype1)
         self.partner1._notify_enable_subtype(self.subtype2)
+        self.partner1._notify_disable_subtype(self.subtype3)
         defaults = form.form_load_defaults()
         expected = dict(
             enable_1=True,
