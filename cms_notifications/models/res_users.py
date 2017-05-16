@@ -26,4 +26,4 @@ class ResUsers(models.Model):
                 ('needaction_partner_ids', 'in', item.partner_id.id),
                 ('subtype_id.cms_type', '=', True),
             ]
-            item.has_unread_notif = bool(msg_model.search_count(domain))
+            item.has_unread_notif = bool(msg_model.search(domain, limit=1))
