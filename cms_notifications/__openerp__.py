@@ -17,6 +17,7 @@
         'templates/assets.xml',
         'templates/help_msg.xml',
         'templates/widget.xml',
+        'templates/user_menu.xml',
         'templates/notification_listing.xml',
     ],
 }

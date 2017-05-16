@@ -1,3 +1,28 @@
+.notif-circle{
+	display: block;
+	content: ' \25CF';
+	color: @brand-warning;
+	font-size: 20px;
+	line-height: 0;
+	position: absolute;
+	top: 20px;
+	left: 5px;
+	z-index: 999;
+}
+#user-menu.has_unread_notif{
+    position: relative;
+    &::before{
+        .notif-circle;
+    }
+    #notifications{
+        position: relative;
+        a::before{
+            .notif-circle;
+            top: 8px;
+            left: 15px;
+        }
+    }
+}
 .cms_form_wrapper.mail_message{
     .listing{
         padding: 1em 0;
