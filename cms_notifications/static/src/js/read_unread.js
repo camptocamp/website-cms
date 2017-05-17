@@ -28,13 +28,23 @@ odoo.define('cms_notifications.read_unread', function (require) {
         return MessageModel.call('mark_as_unread', [ids]);
       },
       update_ui: function(ids){
+        var self = this;
         $.each(ids, function(){
           var $item = $('#item_' + this),
               status = $item.data('status'),
               next_status = status == 'unread'? 'read': 'unread';
+          // update current item status
           $item.data('status', next_status);
           $item.switchClass('item_' + status, 'item_' + next_status);
         });
+        // update global indicator
+        var unread_count =
+          self.$el.closest('.listing').find('.item_unread').length;
+        if (unread_count) {
+          $('#user-menu').addClass('has_unread_notif');
+        } else {
+          $('#user-menu').removeClass('has_unread_notif');
+        }
       }
 
     });

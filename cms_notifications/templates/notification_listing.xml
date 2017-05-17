@@ -54,7 +54,8 @@
               <div class="ref">
                 <t t-if="'website_url' in ref">
                   <a class="ref_link" t-att-href="ref.website_url">View related
-                    <span t-translation="off" class="model_name" t-esc="item.ref_model_id.name" /> <span class="ref_item" t-translation="off" t-esc="item.ref_item_id.display_name" />
+                    <span t-translation="off" class="model_name" t-esc="item.ref_model_id.name" />
+                    <span class="ref_item" t-translation="off" t-esc="item.ref_item_id.display_name" />
                   </a>
                 </t>
                 <t t-if="'website_url' not in ref">
