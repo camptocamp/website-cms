@@ -34,7 +34,7 @@ class CMSNotificationPanel(models.AbstractModel):
         return _('Changes applied.')
 
     def form_next_url(self, main_object=None):
-        return '/my/settings/notification'
+        return '/my/settings/notifications'
 
     @property
     def _super(self):
