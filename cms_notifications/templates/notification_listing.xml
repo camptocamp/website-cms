@@ -50,7 +50,13 @@
             -->
             <div class="body" t-field="item.body"/>
             <t t-set="ref" t-value="item.ref_item_id" />
-            <t t-if="ref">
+            <t t-set="can_view_ref" t-value="form.check_view_permission(ref)" />
+            <!-- TODO: does it makes sense?
+            Maybe is better to completely exclude messages
+            attached to items that are not accessible anymore...
+            Still, reading the message could be useful.
+            -->
+            <t t-if="ref and can_view_ref">
               <div class="ref">
                 <t t-if="'website_url' in ref">
                   <a class="ref_link" t-att-href="ref.website_url">View related

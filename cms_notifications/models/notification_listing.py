@@ -39,3 +39,18 @@ class CMSNotificationListing(models.AbstractModel):
         ]
         domain.extend(default_domain)
         return domain
+
+    def check_view_permission(self, item):
+        """Check read permission on given item.
+
+        We could list messages that are attached to other records.
+        If the permissions for this records has changed
+        then the user viewing the notification may not have
+        permissions to read it anymore.
+        """
+        try:
+            item.check_access_rights('read')
+            item.check_access_rule('read')
+            return True
+        except:
+            return False
