@@ -19,6 +19,8 @@
     <t t-foreach="listing_items" t-as="item">
       <t t-set="unread" t-value="item.is_unread()" />
       <t t-set="status" t-value="'unread' if unread else 'read'" />
+      <t t-set="ref" t-value="item.ref_item_id" />
+      <t t-set="can_view_ref" t-value="form.check_view_permission(ref)" />
       <div t-attf-id="item_#{item.id}"
            t-attf-class="row list_item item_#{status}"
            t-att-data-id="item.id"
@@ -49,8 +51,6 @@
             Maybe we could delegate this to customize_show options.
             -->
             <div class="body" t-field="item.body"/>
-            <t t-set="ref" t-value="item.ref_item_id" />
-            <t t-set="can_view_ref" t-value="form.check_view_permission(ref)" />
             <!-- TODO: does it makes sense?
             Maybe is better to completely exclude messages
             attached to items that are not accessible anymore...
