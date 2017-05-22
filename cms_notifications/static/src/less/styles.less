@@ -23,6 +23,13 @@
         }
     }
 }
+#wrapwrap .cms_form_wrapper.cms_notification_panel_form{
+	// hide required fields mark. Is useless here.
+	.field-required-legend,
+	form .field-required .control-label::after {
+		display:none;
+	}
+}
 .cms_form_wrapper.mail_message{
     .listing{
         padding: 1em 0;
