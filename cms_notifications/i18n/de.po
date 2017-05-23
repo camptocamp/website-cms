@@ -98,7 +98,7 @@ msgstr "Nachrichten-Subtyp"
 #: code:addons/odoo/external-src/website-cms/cms_notifications/models/notification_listing.py:24
 #, python-format
 msgid "My notifications"
-msgstr "My notifications"
+msgstr "Meine Benachrichtigungen"
 
 #. module: cms_notifications
 #: code:addons/cms_notifications/models/notification_panel_form.py:26
