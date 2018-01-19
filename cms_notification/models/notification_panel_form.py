@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-# Copyright 2017 Simone Orsi
+# Copyright 2017-2018 Simone Orsi
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
-from openerp import models, _
-from openerp.addons.cms_form.utils import string_to_bool
+from odoo import models, _
+from odoo.addons.cms_form.utils import string_to_bool
 
 
 class CMSNotificationPanel(models.AbstractModel):
@@ -12,16 +11,12 @@ class CMSNotificationPanel(models.AbstractModel):
     _inherit = 'cms.form'
     _description = 'CMS notification control panel'
 
-    _form_model = 'res.partner'
+    _form_model = 'res.users'
     _form_model_fields = (
-        'notify_email',
-        'notify_frequency',
+        'notification_type',
+        'digest_mode',
+        'digest_frequency',
     )
-    _form_sub_fields = {
-        'notify_email': {
-            'digest': ('notify_frequency', ),
-        }
-    }
 
     @property
     def form_title(self):
@@ -36,35 +31,39 @@ class CMSNotificationPanel(models.AbstractModel):
         return _('Changes applied.')
 
     def form_next_url(self, main_object=None):
+        if self.request.args.get('redirect'):
+            # redirect overridden
+            return self.request.args.get('redirect')
         return '/my/settings/notifications'
 
     @property
     def form_widgets(self):
         return {
-            'notify_email': 'cms.form.widget.notif_radio',
+            'notification_type': 'cms.form.widget.notif_radio',
         }
 
-    @property
-    def _super(self):
-        return super(CMSNotificationPanel, self)
-
     def _form_master_slave_info(self):
-        info = self._super._form_master_slave_info()
+        info = super()._form_master_slave_info()
         info.update({
-            'notify_email': {
-                'readonly': {
-                    'notify_frequency': ('always', 'none', ),
+            'notification_type': {
+                'hide': {
+                    'digest_mode': ('inbox', ),
+                    'digest_frequency': ('inbox', ),
                 },
-                'no_readonly': {
-                    'notify_frequency': ('digest', ),
-                },
-                'required': {
-                    'notify_frequency': ('digest', ),
-                },
-                'no_required': {
-                    'notify_frequency': ('always', 'none', ),
+                'show': {
+                    'digest_mode': ('email', ),
+                    'digest_frequency': ('email', ),
                 },
             },
+            # FIXME: this is currently broken on JS side
+            'digest_mode': {
+                'readonly': {
+                    'digest_frequency': (False, ),
+                },
+                'no_readonly': {
+                    'digest_frequency': (True, ),
+                },
+            }
         })
         return info
 
@@ -86,7 +85,7 @@ class CMSNotificationPanel(models.AbstractModel):
     def form_get_loader(self, fname, field,
                         main_object=None, value=None, **req_values):
         """Override to provide automatic loader for boolean fields."""
-        loader = self._super.form_get_loader(
+        loader = super().form_get_loader(
             fname, field, main_object=main_object,
             value=value, **req_values
         )
@@ -115,8 +114,8 @@ class CMSNotificationPanel(models.AbstractModel):
 
     def form_after_create_or_update(self, values, extra_values):
         """Update subtype configuration for `_form_subtype_fields`."""
-        self._super.form_after_create_or_update(values, extra_values)
-        for fname, subtype_xmlid in self._form_subtype_fields.iteritems():
+        super().form_after_create_or_update(values, extra_values)
+        for fname, subtype_xmlid in self._form_subtype_fields.items():
             value = extra_values.get(fname)
             subtype = self.env.ref(subtype_xmlid)
             # use sudo as we don't know if the user

@@ -54,7 +54,7 @@ subtypes.
 
         @property
         def _form_subtype_fields(self):
-            res = super(CMSNotificationPanel, self)._form_subtype_fields
+            res = super()._form_subtype_fields
             res.update({
                 'enable_my_type': 'module.mt_mytype',
                 'enable_my_type2': 'module.mt_mytype2',
