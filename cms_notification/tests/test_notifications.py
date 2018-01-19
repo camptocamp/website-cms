@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-# Copyright 2017 Simone Orsi
+# Copyright 2017-2018 Simone Orsi
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
-from openerp.tests.common import TransactionCase
-from openerp.addons.cms_form.tests.common import fake_request
+from odoo.tests.common import TransactionCase
+from odoo.addons.cms_form.tests.common import fake_request
 
 
 def add_xmlid(env, record, xmlid, noupdate=False):
@@ -56,7 +55,7 @@ class CMSNotificationCase(TransactionCase):
         return self.env[self.form_model_key].form_init(request, **kw)
 
     def _assert_values(self, expected, values):
-        for k, v in expected.iteritems():
+        for k, v in expected.items():
             self.assertEqual(values[k], v)
 
     def test_form_defaults(self):
