@@ -1,2 +1,5 @@
 # include https://github.com/OCA/OCB/pull/694
 OCB https://github.com/simahawk/OCB website-navbar-fix
+
+# mail_digest
+social
