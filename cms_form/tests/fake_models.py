@@ -73,4 +73,4 @@ class FakeFieldsForm(models.AbstractModel):
 
     def _form_validate_char(self, value, **request_values):
         """Specific validator for all `char` fields."""
-        return not len(value) > 8, 'Text lenght must be greater than 8!'
+        return not len(value) > 8, 'Text length must be greater than 8!'

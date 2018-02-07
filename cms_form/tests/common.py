@@ -42,21 +42,6 @@ class FormTestMixin(object):
         for kls in cls.TEST_MODELS_KLASSES:
             teardown_test_model(cls.env, kls)
 
-    # override this in your test case to inject new models on the fly
-    TEST_MODELS_KLASSES = []
-
-    @classmethod
-    def _setup_models(cls):
-        """Setup new fake models for testing."""
-        for kls in cls.TEST_MODELS_KLASSES:
-            setup_test_model(cls.env, kls)
-
-    @classmethod
-    def _teardown_models(cls):
-        """Wipe fake models once tests have finished."""
-        for kls in cls.TEST_MODELS_KLASSES:
-            teardown_test_model(cls.env, kls)
-
 
 class FormRenderMixin(FormTestMixin):
 
