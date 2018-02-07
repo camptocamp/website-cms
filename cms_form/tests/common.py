@@ -12,15 +12,35 @@ class FormTestMixin(object):
     at_install = False
     post_install = True
 
-    def get_form(self, form_model, req=None, **kw):
+    def get_form(self, form_model, req=None, ctx=None, sudo_uid=None, **kw):
         """Retrieve and initialize a form.
 
         :param form_model: model dotted name
         :param req: a fake request. Default to base fake request
         :param kw: extra arguments to init the form
         """
+        model = self.env[form_model]
+        if sudo_uid:
+            model = model.sudo(sudo_uid)
+        if ctx:
+            model = model.with_context(**ctx)
         request = req or fake_request()
-        return self.env[form_model].form_init(request, **kw)
+        return model.form_init(request, **kw)
+
+    # override this in your test case to inject new models on the fly
+    TEST_MODELS_KLASSES = []
+
+    @classmethod
+    def _setup_models(cls):
+        """Setup new fake models for testing."""
+        for kls in cls.TEST_MODELS_KLASSES:
+            setup_test_model(cls.env, kls)
+
+    @classmethod
+    def _teardown_models(cls):
+        """Wipe fake models once tests have finished."""
+        for kls in cls.TEST_MODELS_KLASSES:
+            teardown_test_model(cls.env, kls)
 
     # override this in your test case to inject new models on the fly
     TEST_MODELS_KLASSES = []

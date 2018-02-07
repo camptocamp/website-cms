@@ -31,31 +31,8 @@ def string_to_bool(value, true_values=TRUE_VALUES):
     return value in true_values
 
 
-# DEFAULT_LOADERS = {
-#     'many2one': m2o_to_form,
-#     'one2many': x2many_to_form,
-#     'many2many': x2many_to_form,
-#     'binary': binary_to_form,
-#     # TODO: use a specific field type for images
-#     'image': binary_to_form,
-# }
-# DEFAULT_EXTRACTORS = {
-#     'integer': form_to_integer,
-#     'float': form_to_float,
-#     'many2one': form_to_m2o,
-#     'one2many': form_to_x2many,
-#     'many2many': form_to_x2many,
-#     # TODO: use a specific field type for images
-#     'image': form_to_binary,
-#     'binary': form_to_binary,
-#     'date': form_to_date,
-#     'datetime': form_to_date,
-#     'boolean': form_to_bool,
-# }
-#
-
 def data_merge(a, b):
-    """Merges b into a and return merged result
+    """Merges `b` into `a` and return merged result
 
     NOTE: tuples and arbitrary objects are not handled
     as it is totally ambiguous what should happen.
@@ -63,8 +40,6 @@ def data_merge(a, b):
     Thanks to http://stackoverflow.com/a/15836901/647924
     """
     key = None
-    # ## debug output
-    # sys.stderr.write("DEBUG: %s to %s\n" %(b,a))
     try:
         if a is None or isinstance(a, (str, int, float)):
             # border case for first run or if a is a primitive

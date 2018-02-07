@@ -50,5 +50,6 @@ def teardown_test_model(env, model_cls):
 
     Courtesy of SBidoul from https://github.com/OCA/mis-builder :)
     """
-    del env.registry.models[model_cls._name]
+    if not getattr(model_cls, '_teardown_no_delete', False):
+        del env.registry.models[model_cls._name]
     env.registry.setup_models(env.cr)

@@ -274,7 +274,8 @@ class BinaryWidget(models.AbstractModel):
                 value = ''
                 mimetype = ''
             else:
-                mimetype = guess_mimetype(value.decode('base64'))
+                value = str(value, 'utf-8')
+                mimetype = guess_mimetype(base64.b64decode(value))
             _value = {
                 'value': value,
                 'raw_value': value,
