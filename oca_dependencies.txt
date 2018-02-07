@@ -1,5 +1,6 @@
-# include https://github.com/OCA/OCB/pull/694
-OCB https://github.com/simahawk/OCB website-navbar-fix
+# [MIG][11.0] cms_form #36
+# https://github.com/OCA/website-cms/pull/36
+website-cms  https://github.com/simahawk/website-cms 11-mig-cms_form
 
 # mail_digest
 social
