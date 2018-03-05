@@ -87,11 +87,11 @@ class TestControllers(FormHttpTestCase):
 
     def test_default_routes(self):
         self._check_route(
-            '/cms/form/create/res.partner',
+            '/cms/create/res.partner',
             'res.partner',
             'create')
         partner = self.env.ref('base.res_partner_1')
         self._check_route(
-            '/cms/form/edit/res.partner/{}'.format(partner.id),
+            '/cms/edit/res.partner/{}'.format(partner.id),
             'res.partner',
             'edit')
