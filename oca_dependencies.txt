@@ -1,2 +1,4 @@
 # mail_digest
 social
+# pending PR for cms_info https://github.com/OCA/website-cms/pull/45
+website-cms https://github.com/simahawk/website-cms 11-add-cms_info
