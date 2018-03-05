@@ -13,6 +13,7 @@
     "installable": True,
     "depends": [
         'cms_info',
+        'cms_status_message',
     ],
     "data": [
         'templates/assets.xml',
