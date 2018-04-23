@@ -5,7 +5,7 @@ import inspect
 import json
 from collections import OrderedDict
 
-from odoo import models, tools, exceptions
+from odoo import models, tools, exceptions, _
 
 from ..utils import data_merge
 
@@ -137,34 +137,25 @@ class CMSFormMixin(models.AbstractModel):
                 setattr(form, '_form_' + k, v)
         return form
 
-    def form_check_permission(self):
+    def form_check_permission(self, raise_exception=True):
         """Check permission on current model and main object if any."""
+        res = True
+        msg = ''
         if self.main_object:
-            self._can_edit()
+            res = self.main_object.cms_can_edit()
+            msg = _(
+                'You cannot edit this record. Model: %s, ID: %s.'
+            ) % (self.main_object._name, self.main_object.id)
         else:
-            self._can_create()
-        return True
-
-    def _can_create(self, raise_exception=True):
-        """Check that current user can create instances of given model."""
-        if self._form_model:
-            return self.form_model.check_access_rights(
-                'create', raise_exception=raise_exception)
-        return True
-
-    def _can_edit(self, raise_exception=True):
-        """Check that current user can edit main object if any."""
-        if not self.main_object:
-            return True
-        try:
-            self.main_object.check_access_rights('write')
-            self.main_object.check_access_rule('write')
-            can = True
-        except exceptions.AccessError:
-            if raise_exception:
-                raise
-            can = False
-        return can
+            if self._form_model:
+                res = self.form_model.cms_can_create()
+                msg = _(
+                    'You are not allowed to create any record '
+                    'for the model `%s`.'
+                ) % self._form_model
+        if raise_exception and not res:
+            raise exceptions.AccessError(msg)
+        return res
 
     @property
     def form_title(self):
