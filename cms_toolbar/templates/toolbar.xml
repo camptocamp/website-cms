@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+<template id="toolbar" name="CMS toolbar">
+  <t t-if="show_edit or show_create">
+    <div t-attf-class="cms_toolbar #{main_object._name.replace('.', '_')}">
+      <t t-if="show_edit">
+        <div class="pull-left actions left-actions">
+          <t t-if="show_edit">
+            <a class="btn btn-default" t-att-href="main_object.cms_edit_url">Edit</a>
+          </t>
+          <t t-if="show_publish">
+            <t t-call="cms_toolbar.publish"/>
+          </t>
+          <t t-if="show_delete">
+            <a class="btn btn-danger cms_delete_confirm" t-att-href="main_object.cms_delete_confirm_url">Delete</a>
+          </t>
+        </div>
+      </t>
+      <t t-if="show_create">
+        <t t-set="create_url" t-value="create_url or main_object.cms_create_url"/>
+        <t t-if="create_url">
+          <div class="pull-right actions right-actions">
+            <a class="btn btn-default" t-att-href="create_url">Create</a>
+          </div>
+        </t>
+      </t>
+    </div>
+  </t>
+</template>
+
+
+<template id="publish" name="CMS toolbar publish widget">
+  <div t-attf-class="js_publish_management #{main_object.website_published and 'css_published' or 'css_unpublished'}"
+       t-att-data-id="main_object.id" t-att-data-object="main_object._name" t-att-data-controller="publish_controller" t-ignore="true">
+    <button type="button" class="btn js_publish_btn css_publish popover_sticky"
+            data-container="body" data-toggle="popover" data-placement="bottom"
+            t-att-data-htmlcontent="show_popover and '#popover_html_content'"
+            data-action="publish">Publish</button>
+    <button class="btn js_publish_btn css_unpublish" data-action="unpublish">Unpublish</button>
+    <t t-if="show_popover">
+      <div id="popover_html_content" style="display:none!important">
+        <t t-call="#{ popover_content_template }" />
+      </div>
+    </t>
+  </div>
+</template>
+
+
+<template id="popover_html_content" name="CMS toolbar popover content">
+  Remember to publish your content when you are done with editing.
+</template>
+
+
+</odoo>
