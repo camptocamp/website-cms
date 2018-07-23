@@ -1,19 +1,7 @@
 # Copyright 2018 Simone Orsi
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 from ..common import get_form
-from .common import TestWidgetCase
-
-
-def fake_field(name, **kw):
-    info = {
-        'type': 'char',
-        'required': False,
-        'string': name.capitalize(),
-        'readonly': False,
-        'help': 'Help for %s' % name,
-    }
-    info.update(kw)
-    return name, info
+from .common import TestWidgetCase, fake_form, fake_field
 
 
 class TestWidgetBase(TestWidgetCase):
