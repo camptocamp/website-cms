@@ -45,18 +45,29 @@ class DeleteMixin(object):
         :return: json data to handle redirect and status message
         """
         main_object = self.get_main_object(model, model_id)
+        redirect = kwargs.get('redirect', ' ').strip()
         result = {
-            'redirect': kwargs.get('redirect', ' ').strip(),
             'message': '',
         }
         msg = main_object.msg_content_deleted()
-        main_object.unlink()
-        if result['redirect']:
-            # put message in session if redirecting
-            request.env['website'].add_status_message(msg)
+        try:
+            main_object.unlink()
+            success = True
+        except Exception as err:
+            success = False
+            msg = getattr(err, 'name', str(err))
+
+        if success:
+            if redirect:
+                # put message in session if redirecting
+                request.env['website'].add_status_message(msg)
+                result['redirect'] = redirect
+            else:
+                # otherwise return it and handle it via JS
+                result['message'] = msg
         else:
-            # otherwise return it and handle it via JS
             result['message'] = msg
+        result['success'] = success
         return json.dumps(result)
 
 
