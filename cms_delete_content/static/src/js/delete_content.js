@@ -40,7 +40,11 @@ odoo.define('cms_delete_content.delete_confirm', function (require) {
           data: data,
           dataType: 'json'
         }).done(function (result) {
-          self.handle_modal_success(result);
+          if (result.success) {
+            self.handle_modal_success(result);
+          } else {
+            self.handle_modal_fail(result);
+          }
         });
         return false;
       },
@@ -65,6 +69,12 @@ odoo.define('cms_delete_content.delete_confirm', function (require) {
           });
         }
         // TODO: trigger custom event as hook
+      },
+
+      handle_modal_fail: function(result){
+        this.$form.hide();
+        this.$modal.find('.error-msg')
+          .html(result.message).closest('.error-msg-wrapper').show();
       }
     });
 

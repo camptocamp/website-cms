@@ -23,6 +23,13 @@ License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
                         class="btn btn-danger" title="Click here to delete this item" value="confirm">Confirm</button>
                 <button type="button" class="btn btn-default ml16" title="Cancel" data-dismiss="modal">Cancel</button>
               </form>
+              <div class="alert alert-danger error-msg-wrapper" style="display:none !important">
+                <strong>Something went wrong</strong>
+                <div class="error-msg"></div>
+                <div class="dimiss-button">
+                  <button type="button" class="btn btn-default ml16" title="Cancel" data-dismiss="modal">Close</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
