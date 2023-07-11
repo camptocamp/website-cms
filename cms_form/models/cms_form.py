@@ -1,9 +1,11 @@
 # Copyright 2017 Simone Orsi
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
+import contextlib
+
 import psycopg2 as pg
 
-from odoo import _, exceptions, fields, models
+from odoo import _, api, exceptions, fields, models
 
 from .fields import Serialized
 
@@ -218,9 +220,24 @@ class CMSForm(models.AbstractModel):
         if orm_error:
             msg = errors_message.get("_validation") or errors_message.get("_integrity")
             if msg:
-                self.add_status_message(msg, kind="danger", title=None)
+                with self.new_env_self() as new_self:
+                    new_self.add_status_message(msg, kind="danger", title=None)
         render_values.update({"errors": errors, "errors_message": errors_message})
         return render_values
 
     def add_status_message(self, msg, **kw):
         self.env["ir.http"].add_status_message(msg, request=self.request, **kw)
+
+    @contextlib.contextmanager
+    def new_env_self(self):
+        """Init a new env w/ new cursor for current form.
+
+        Careful: only the request attribute is propagated for now
+        since the new env will have an empty cache apart from the request
+        """
+        with contextlib.closing(self.env.registry.cursor()) as cr:
+            new_env = api.Environment(cr, self.env.uid, self.env.context)
+            new_self = self.with_env(new_env)
+            self.request.env = new_env
+            new_self.request = self.request
+            yield new_self
