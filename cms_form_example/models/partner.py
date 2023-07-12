@@ -3,6 +3,8 @@
 
 from odoo import fields, models, tools
 
+from odoo.addons.cms_form.models.fields import Serialized
+
 testing = tools.config.get("test_enable")
 
 
@@ -15,10 +17,11 @@ if not testing:
         _name = "cms.form.res.partner"
         _inherit = "cms.form"
         _description = __doc__
-        _form_model = "res.partner"
-        _form_model_fields = ("name", "country_id", "category_id")
-        _form_required_fields = ("name",)
-        _form_fields_order = ("name", "country_id", "category_id")
+
+        form_model_name = fields.Char(default="res.partner")
+        form_model_fields = Serialized(default=("name", "country_id", "category_id"))
+        form_required_fields = Serialized(default=("name",))
+        form_fields_order = Serialized(default=("name", "country_id", "category_id"))
 
         custom = fields.Char()
 
@@ -32,11 +35,8 @@ if not testing:
         _name = "cms.form.search.res.partner"
         _inherit = "cms.form.search"
         _description = __doc__
-        _form_model = "res.partner"
-        _form_model_fields = (
-            "name",
-            "country_id",
-        )
+        form_model_name = fields.Char(default="res.partner")
+        form_model_fields = Serialized(default=("name", "country_id"))
 
     class PartnerSearchFormAjax(models.AbstractModel):
         """Partner model search form with ajax."""
@@ -44,33 +44,36 @@ if not testing:
         _inherit = "cms.form.search.res.partner"
         _name = "cms.form.search.res.partner.ajax"
         _description = __doc__
-        _form_ajax = True
-        _form_ajax_onchange = True
+        form_ajax = fields.Boolean(default=True)
+        form_ajax_onchange = fields.Boolean(default=True)
 
     class ExamplePartnerFormWithFieldsets(models.AbstractModel):
         _name = "cms.form.res.partner.fset"
         _inherit = "cms.form.res.partner"
         _description = __doc__
 
-        _form_fieldsets = [
-            {
-                "id": "main",
-                "title": "Main",
-                "fields": [
-                    "name",
-                    "category_id",
-                ],
-            },
-            {
-                "id": "secondary",
-                "title": "Secondary",
-                "fields": [
-                    "country_id",
-                ],
-            },
-        ]
+        form_fieldsets = Serialized(
+            default=[
+                {
+                    "id": "main",
+                    "title": "Main",
+                    "fields": [
+                        "name",
+                        "category_id",
+                    ],
+                },
+                {
+                    "id": "secondary",
+                    "title": "Secondary",
+                    "fields": [
+                        "country_id",
+                    ],
+                },
+            ]
+        )
 
     class ExamplePartnerFormWithTabbedFieldsets(models.AbstractModel):
         _name = "cms.form.res.partner.fset.tabbed"
         _inherit = "cms.form.res.partner.fset"
-        _form_fieldsets_display = "tabs"
+
+        form_fieldsets_display = fields.Selection(default="tabs")

@@ -58,7 +58,6 @@ class PartnerFormTabbedFieldset(http.Controller, FormControllerMixin):
         ],
         type="http",
         auth="user",
-        website=True,
     )
     def cms_form(self, main_object=None, **kw):
         model = "res.partner"
@@ -81,7 +80,7 @@ class PartnerListing(http.Controller, SearchFormControllerMixin):
         auth="public",
         website=True,
     )
-    def market(self, **kw):
+    def listing(self, **kw):
         model = "res.partner"
         return self.make_response(model, **kw)
 
@@ -96,9 +95,8 @@ class PartnerListingAjax(http.Controller, SearchFormControllerMixin):
         ],
         type="http",
         auth="public",
-        website=True,
     )
-    def list(self, **kw):
+    def listing(self, **kw):
         model = "res.partner"
         return self.make_response(model, **kw)
 

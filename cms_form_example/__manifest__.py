@@ -5,7 +5,7 @@
     "name": "CMS Form example",
     "summary": """
         Basic content type form example""",
-    "version": "13.0.1.0.1",
+    "version": "16.0.1.0.0",
     "license": "AGPL-3",
     "author": "Simone Orsi,Odoo Community Association (OCA)",
     "maintainers": ["simahawk"],
@@ -14,8 +14,10 @@
         "website_partner",
         "cms_form",
     ],
-    "data": [
-        "templates/assets.xml",
-    ],
+    "assets": {
+        "web.assets_frontend": [
+            "cms_form_example/static/src/js/cms_form_example.tour.js",
+        ],
+    },
     "installable": True,
 }
