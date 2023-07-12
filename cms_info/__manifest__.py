@@ -10,7 +10,7 @@
     "category": "CMS",
     "website": "https://github.com/OCA/website-cms",
     "author": "Camptocamp, Odoo Community Association (OCA)",
-    "mainainers": ["simahawk"],
+    "maintainers": ["simahawk"],
     "license": "LGPL-3",
     "installable": True,
     "depends": ["base"],
