@@ -226,7 +226,7 @@ class CMSForm(models.AbstractModel):
         return render_values
 
     def add_status_message(self, msg, **kw):
-        self.env["ir.http"].add_status_message(msg, request=self.request, **kw)
+        self.env["ir.http"].add_status_message(msg, request=self.o_request, **kw)
 
     @contextlib.contextmanager
     def new_env_self(self):
