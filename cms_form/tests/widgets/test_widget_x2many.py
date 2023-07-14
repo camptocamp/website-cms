@@ -11,6 +11,7 @@ class TestWidgetX2M(TestWidgetCase):
         super().setUpClass()
         cls.partners = cls.env["res.partner"].search([], limit=4)
         cls.form = fake_form(
+            cls.env,
             # fake defaults
             # behavior of o2m or m2m ATM is the same
             m2m_field=cls.partners.ids[0:2],
@@ -79,6 +80,7 @@ class TestWidgetX2M(TestWidgetCase):
         categs = self.env["res.partner.category"].search([], limit=3)
         partner = self.partners[0]
         form = fake_form(
+            self.env,
             # category_id=categs,
             main_object=partner,
         )

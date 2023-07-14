@@ -11,6 +11,7 @@ class TestWidgetM2O(TestWidgetCase):
         super().setUpClass()
         cls.partners = cls.env["res.partner"].search([], limit=4)
         cls.form = fake_form(
+            cls.env,
             # fake defaults
             m2o_field=cls.partners.ids[0],
         )
