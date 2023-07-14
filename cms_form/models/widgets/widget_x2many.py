@@ -59,6 +59,7 @@ class X2MWidget(models.AbstractModel):
 
     def form_to_x2many(self, value, **req_values):
         _value = False
+        # TODO: use `fields.Command`
         if self.w_form.form_extract_value_mode == "write":
             if value:
                 _value = [(6, False, self.w_ids_from_input(value))]
