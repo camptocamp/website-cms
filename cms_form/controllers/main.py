@@ -142,7 +142,7 @@ class CMSFormController(http.Controller, FormControllerMixin):
 
 class WizardFormControllerMixin(FormControllerMixin):
 
-    template = "cms_form.wizard_portal_form_wrapper"
+    template = "cms_form.portal_wizard_form_wrapper"
 
     def make_response(self, wiz_model, model_id=None, page=1, **kw):
         """Custom response.
