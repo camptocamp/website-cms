@@ -46,6 +46,9 @@ class Marshaller:
             if k.endswith(":esc"):
                 self._add_todo(k, v, self.marshal_esc)
                 continue
+            if k.endswith(":dict:list"):
+                self._add_todo(k, v, self.marshal_dict_list)
+                continue
             if k.endswith(":list"):
                 self._add_todo(k, v, self.marshal_list)
                 continue
@@ -139,3 +142,62 @@ class Marshaller:
             full_key, _, __ = _k.partition(":dict")
             res[full_key.split(".")[-1]] = _v
         return key, res
+
+    def marshal_dict_list(self, orig_key, orig_value):
+        """Transform `foo:dict:list` inputs to list of dict values.
+
+        `orig_key` must be formatted like:
+
+            `$fname.$index.$dict_key:dict:list`
+
+        Every request key matching `$fname` prefix
+        will be merged into a list of dicts whereas keys will match all `$dict_key`
+        and the position in the list will match $index.
+
+        Example:
+
+            values = [
+                ("b.1.x:dict:list", "b1x"),
+                ("b.1.y:dict:list", "b1y"),
+                ("b.2.x:dict:list", "b2x"),
+                ("b.2.y:dict:list", "b2y"),
+            ]
+
+            will be translated to:
+
+            values['b'] = [
+                {
+                    'x': 'b1x',
+                    'y': 'b1y',
+                },
+                {
+                    'x': 'b2x',
+                    'y': 'b2y',
+                },
+            }
+
+        """
+        res = []
+
+        def parse_key(key):
+            main_key, index, inner_key = key[: -len(":dict:list")].split(".")
+            if not index.isdigit():
+                raise ValueError(":dict:list requires an integer index")
+            return main_key, index, inner_key
+
+        main_key, index, inner_key = parse_key(orig_key)
+        by_index = {}
+        for _k, _v in self.req_values.items():
+            # get all the keys matching fname
+            if not _k.startswith(f"{main_key}."):
+                continue
+            self.skip_keys.add(_k)
+            __, index, inner_key = parse_key(_k)
+            by_index.setdefault(index, []).append((inner_key, _v))
+        #  by_index = {0: [(x, xv), (y, yv)]}
+        for __, values in sorted(by_index.items()):
+            item = {}
+            for inner_key, value in values:
+                item[inner_key] = value
+            res.append(item)
+        return main_key, res
