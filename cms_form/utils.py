@@ -5,14 +5,14 @@
 def safe_to_integer(value, **kw):
     """Convert to integer safely."""
     try:
-        return int(value)
+        return int(value) if value and value.isdigit() else value
     except (ValueError, TypeError):
         return None
 
 
 def safe_to_float(value, **kw):
     try:
-        return float(value)
+        return float(value.replace(",", ".") if isinstance(value, str) else value)
     except (ValueError, TypeError):
         return None
 
