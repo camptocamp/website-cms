@@ -13,6 +13,7 @@ class TestWidgetTxt(TestWidgetCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.form = fake_form(
+            cls.env,
             a_char_field="Just a string",
             a_text_field=TXT,
         )

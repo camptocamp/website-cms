@@ -8,6 +8,7 @@ class TestWidgetHidden(TestWidgetCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.form = fake_form(
+            cls.env,
             # fake defaults
             char_field="abc",
             int_field=5,
