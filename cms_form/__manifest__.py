@@ -8,7 +8,6 @@
     "version": "16.0.1.0.0",
     "license": "LGPL-3",
     "author": "Camptocamp, Odoo Community Association (OCA)",
-    "depends": ["website", "cms_info", "cms_status_message"],
     "maintainers": ["simahawk"],
     "website": "https://github.com/OCA/website-cms",
     "depends": [
