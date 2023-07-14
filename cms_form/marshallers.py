@@ -6,6 +6,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from . import utils
+
 
 def marshal_request_values(values):
     """Transform given request values using marshallers.
@@ -43,26 +45,22 @@ class Marshaller:
         for k, v in self.req_values.items():
             if k in self.skip_keys:
                 continue
-            if k.endswith(":esc"):
-                self._add_todo(k, v, self.marshal_esc)
-                continue
-            if k.endswith(":dict:list"):
-                self._add_todo(k, v, self.marshal_dict_list)
-                continue
-            if k.endswith(":list"):
-                self._add_todo(k, v, self.marshal_list)
-                continue
-            if k.endswith(":dict"):
-                self._add_todo(k, v, self.marshal_dict)
-                continue
-            if k.endswith(":int"):
-                self._add_todo(k, v, self.marshal_int)
-                continue
-            if k.endswith(":float"):
-                self._add_todo(k, v, self.marshal_float)
-                continue
+            for operator, handler in self._marshallers():
+                if k.endswith(operator):
+                    self._add_todo(k, v, handler)
+                    continue
             # plain
             self._add_todo(k, v, self.marshal_plain)
+
+    def _marshallers(self):
+        return (
+            (":esc", self.marshal_esc),
+            (":dict:list", self.marshal_dict_list),
+            (":list", self.marshal_list),
+            (":dict", self.marshal_dict),
+            (":int", self.marshal_int),
+            (":float", self.marshal_float),
+        )
 
     def marshall(self):
         res = {}
@@ -92,17 +90,12 @@ class Marshaller:
     def marshal_int(self, orig_key, orig_value):
         """Transform `foo:int` inputs to integer values."""
         k = orig_key[: -len(":int")]
-        v = int(orig_value) if orig_value and orig_value.isdigit() else orig_value
-        return k, v
+        return k, utils.safe_to_integer(orig_value)
 
     def marshal_float(self, orig_key, orig_value):
         """Transform `foo:float` inputs to float values."""
         k = orig_key[: -len(":float")]
-        try:
-            v = float(orig_value.replace(",", "."))
-        except (ValueError, TypeError):
-            v = orig_value
-        return k, v
+        return k, utils.safe_to_float(orig_value)
 
     def marshal_dict(self, orig_key, orig_value):
         """Transform `foo:dict` inputs to dictionary values.
