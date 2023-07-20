@@ -176,7 +176,7 @@ class Marshaller:
             main_key, index, inner_key = key[: -len(":dict:list")].split(".")
             if not index.isdigit():
                 raise ValueError(":dict:list requires an integer index")
-            return main_key, index, inner_key
+            return main_key, int(index), inner_key
 
         main_key, index, inner_key = parse_key(orig_key)
         by_index = {}
