@@ -240,4 +240,5 @@ class CMSForm(models.AbstractModel):
             new_self = self.with_env(new_env)
             self.request.env = new_env
             new_self.request = self.request
+            new_self.o_request = self.o_request
             yield new_self
