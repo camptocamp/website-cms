@@ -9,7 +9,7 @@
     "license": "LGPL-3",
     "author": "Camptocamp, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/website-cms",
-    "depends": ["web"],
+    "depends": ["web", "portal"],
     "data": [
         "templates/status_message.xml",
         "templates/display_test.xml",
