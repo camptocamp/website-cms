@@ -460,8 +460,8 @@ class CMSFormMixin(models.AbstractModel):
             return widget_conf["resolver"](self, fname, field, **kw)
         try:
             model = widget_conf["model"]
-        except KeyError as e:
-            raise ValueError("`form_widget` requires a `model` key") from e
+        except KeyError:
+            model = self._form_get_default_widget_model(fname, field)
         options = widget_conf.get("options", {})
         if options and callable(options):
             options = options(self, fname, field, **kw)
