@@ -1,9 +1,13 @@
 # Copyright 2017 Simone Orsi
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
-from psycopg2 import IntegrityError
+import contextlib
 
-from odoo import _, exceptions, models
+import psycopg2 as pg
+
+from odoo import _, api, exceptions, fields, models
+
+from .fields import Serialized
 
 
 class CMSForm(models.AbstractModel):
@@ -11,25 +15,22 @@ class CMSForm(models.AbstractModel):
     _description = "CMS Form"
     _inherit = "cms.form.mixin"
 
-    # default validators by field type
-    _form_validators = {
-        # 'many2one': 'my_validation_method'
-    }
-
     # internal flag for successful form
-    __form_success = False
+    form_success = fields.Boolean(form_tech=True, default=False)
+    # internal flag for turning on redirection
+    form_redirect = fields.Boolean(form_tech=True, default=False)
+    # default validators by field type
+    # 'many2one': 'my_validation_method'
+    form_validators = Serialized(form_tech=True, default={})
+    # make it computed
+    form_title = fields.Char(form_tech=True, compute="_compute_form_title")
 
-    @property
-    def form_success(self):
-        return self.__form_success
+    def _compute_form_title(self):
+        for rec in self:
+            rec.form_title = rec._get_form_title()
 
-    @form_success.setter
-    def form_success(self, value):
-        self.__form_success = value
-
-    @property
-    def form_title(self):
-        if not self._form_model:
+    def _get_form_title(self):
+        if not self.form_model_name:
             return ""
         if self.main_object:
             rec_field = self.main_object[self.form_model._rec_name]
@@ -38,26 +39,15 @@ class CMSForm(models.AbstractModel):
             title = _('Edit "%s"') % rec_field
         else:
             title = _("Create %s")
-            if self._form_model:
+            if self.form_model_name:
                 model = (
                     self.env["ir.model"]
                     .sudo()
-                    .search([("model", "=", self._form_model)])
+                    .search([("model", "=", self.form_model_name)])
                 )
                 name = model and model.name or ""
                 title = _("Create %s") % name
         return title
-
-    # internal flag for turning on redirection
-    __form_redirect = False
-
-    @property
-    def form_redirect(self):
-        return self.__form_redirect
-
-    @form_redirect.setter
-    def form_redirect(self, value):
-        self.__form_redirect = value
 
     @property
     def form_msg_success_created(self):
@@ -79,8 +69,8 @@ class CMSForm(models.AbstractModel):
             # redirect overridden
             return self.request.args.get("redirect")
         main_object = main_object or self.main_object
-        if main_object and "website_url" in main_object:
-            return main_object.website_url
+        if main_object and "url" in main_object._fields:
+            return main_object.url
         return "/"
 
     def form_cancel_url(self, main_object=None):
@@ -89,8 +79,8 @@ class CMSForm(models.AbstractModel):
             # redirect overridden
             return self.request.args.get("redirect")
         main_object = main_object or self.main_object
-        if main_object and "website_url" in main_object:
-            return main_object.website_url
+        if main_object and "url" in main_object._fields:
+            return main_object.url
         return self.request.referrer or "/"
 
     def form_check_empty_value(self, fname, field, value, **req_values):
@@ -105,7 +95,7 @@ class CMSForm(models.AbstractModel):
         request_values = request_values or self.form_get_request_values()
 
         missing = False
-        for fname, field in self.form_fields().items():
+        for fname, field in self.form_fields_get().items():
             value = request_values.get(fname)
             error = False
             if field["required"] and self.form_check_empty_value(
@@ -121,15 +111,15 @@ class CMSForm(models.AbstractModel):
                 errors_message[fname] = error_msg
 
         # error message for empty required fields
-        if missing and self.o_request.website:
+        if missing:
             msg = self.form_msg_error_missing
-            self.o_request.website.add_status_message(msg, type_="danger")
+            self.add_status_message(msg, kind="danger")
         return errors, errors_message
 
     def form_get_validator(self, fname, field):
         """Retrieve field validator."""
         # 1nd lookup for a default type validator
-        validator = self._form_validators.get(field["type"], None)
+        validator = self.form_validators.get(field["type"], None)
         # 2nd lookup for a specific type validator
         validator = getattr(self, "_form_validate_" + field["type"], validator)
         # 3rd lookup and override by named validator if any
@@ -138,20 +128,19 @@ class CMSForm(models.AbstractModel):
 
     def form_before_create_or_update(self, values, extra_values):
         """Pre create/update hook."""
-        pass
 
     def form_after_create_or_update(self, values, extra_values):
         """Post create/update hook."""
-        pass
 
     def _form_purge_non_model_fields(self, values):
         """Purge fields that are not in `form_model` schema and return them."""
         extra_values = {}
-        if not self._form_model:
+        if not self.form_model_name:
             return extra_values
         _model_fields = list(
             self.form_model.fields_get(
-                self._form_model_fields, attributes=self._form_fields_attributes,
+                self.form_model_fields,
+                attributes=self.form_fields_attributes,
             ).keys()
         )
         submitted_keys = list(values.keys())
@@ -182,10 +171,10 @@ class CMSForm(models.AbstractModel):
         else:
             self._form_create(write_values)
             msg = self.form_msg_success_created
-        if msg and self.o_request.website:
-            self.o_request.website.add_status_message(msg)
         # post hook
         self.form_after_create_or_update(write_values, extra_values)
+        if msg:
+            self.add_status_message(msg)
         return self.main_object
 
     def form_process_POST(self, render_values):
@@ -206,9 +195,13 @@ class CMSForm(models.AbstractModel):
                 # u'Error while validating constraint\n
                 #    \nEnd Date cannot be set before Start Date.\nNone'
                 errors_message["_validation"] = "<br />".join(
-                    [x for x in err.name.replace("None", "").split("\n") if x.strip()]
+                    [
+                        x
+                        for x in err.args[0].replace("None", "").split("\n")
+                        if x.strip()
+                    ]
                 )
-            except IntegrityError as err:
+            except (pg.IntegrityError, pg.OperationalError) as err:
                 errors["_integrity"] = True
                 errors_message["_integrity"] = "<br />".join(
                     [x for x in str(err).split("\n") if x.strip()]
@@ -230,9 +223,28 @@ class CMSForm(models.AbstractModel):
         orm_error = errors.get("_validation") or errors.get("_integrity")
         if orm_error:
             msg = errors_message.get("_validation") or errors_message.get("_integrity")
-            if msg and self.o_request.website:
-                self.o_request.website.add_status_message(
-                    msg, type_="danger", title=None
-                )
+            if msg:
+                with self.new_env_self() as new_self:
+                    new_self.add_status_message(
+                        msg, kind="danger", title=None, dismissible=False
+                    )
         render_values.update({"errors": errors, "errors_message": errors_message})
         return render_values
+
+    def add_status_message(self, msg, **kw):
+        self.env["ir.http"].add_status_message(msg, request=self.o_request, **kw)
+
+    @contextlib.contextmanager
+    def new_env_self(self):
+        """Init a new env w/ new cursor for current form.
+
+        Careful: only the request attribute is propagated for now
+        since the new env will have an empty cache apart from the request
+        """
+        with contextlib.closing(self.env.registry.cursor()) as cr:
+            new_env = api.Environment(cr, self.env.uid, self.env.context)
+            new_self = self.with_env(new_env)
+            self.request.env = new_env
+            new_self.request = self.request
+            new_self.o_request = self.o_request
+            yield new_self
