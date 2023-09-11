@@ -225,7 +225,9 @@ class CMSForm(models.AbstractModel):
             msg = errors_message.get("_validation") or errors_message.get("_integrity")
             if msg:
                 with self.new_env_self() as new_self:
-                    new_self.add_status_message(msg, kind="danger", title=None, dismissible=False)
+                    new_self.add_status_message(
+                        msg, kind="danger", title=None, dismissible=False
+                    )
         render_values.update({"errors": errors, "errors_message": errors_message})
         return render_values
 
