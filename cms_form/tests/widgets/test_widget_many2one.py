@@ -11,6 +11,7 @@ class TestWidgetM2O(TestWidgetCase):
         super().setUpClass()
         cls.partners = cls.env["res.partner"].search([], limit=4)
         cls.form = fake_form(
+            cls.env,
             # fake defaults
             m2o_field=cls.partners.ids[0],
         )
@@ -23,7 +24,10 @@ class TestWidgetM2O(TestWidgetCase):
             domain=[("id", "in", self.partners.ids)],
         )
         widget = self.get_widget(
-            w_name, w_field, form=self.form, widget_model="cms.form.widget.many2one",
+            w_name,
+            w_field,
+            form=self.form,
+            widget_model="cms.form.widget.many2one",
         )
         self.assertEqual(widget.w_comodel, self.env["res.partner"])
         self.assertEqual(widget.w_domain, [("id", "in", self.partners.ids)])
@@ -32,10 +36,15 @@ class TestWidgetM2O(TestWidgetCase):
     def test_widget_many2one_base_load(self):
         # TODO: test load value from form record
         w_name, w_field = fake_field(
-            "m2o_field", type="many2one", relation="res.partner",
+            "m2o_field",
+            type="many2one",
+            relation="res.partner",
         )
         widget = self.get_widget(
-            w_name, w_field, form=self.form, widget_model="cms.form.widget.many2one",
+            w_name,
+            w_field,
+            form=self.form,
+            widget_model="cms.form.widget.many2one",
         )
 
         self.assertEqual(widget.w_load(m2o_field="1"), 1)
@@ -49,10 +58,15 @@ class TestWidgetM2O(TestWidgetCase):
 
     def test_widget_many2one_base_extract(self):
         w_name, w_field = fake_field(
-            "m2o_field", type="many2one", relation="res.partner",
+            "m2o_field",
+            type="many2one",
+            relation="res.partner",
         )
         widget = self.get_widget(
-            w_name, w_field, form=self.form, widget_model="cms.form.widget.many2one",
+            w_name,
+            w_field,
+            form=self.form,
+            widget_model="cms.form.widget.many2one",
         )
 
         self.assertEqual(widget.w_extract(m2o_field="1"), 1)
@@ -70,10 +84,15 @@ class TestWidgetM2O(TestWidgetCase):
 
     def test_widget_many2one_base_render(self):
         w_name, w_field = fake_field(
-            "m2o_field", type="many2one", relation="res.partner",
+            "m2o_field",
+            type="many2one",
+            relation="res.partner",
         )
         widget = self.get_widget(
-            w_name, w_field, form=self.form, widget_model="cms.form.widget.many2one",
+            w_name,
+            w_field,
+            form=self.form,
+            widget_model="cms.form.widget.many2one",
         )
         expected_attrs = {
             "id": "m2o_field",
@@ -86,7 +105,9 @@ class TestWidgetM2O(TestWidgetCase):
 
     def test_widget_many2one_multi(self):
         w_name, w_field = fake_field(
-            "m2o_field", type="many2one", relation="res.partner",
+            "m2o_field",
+            type="many2one",
+            relation="res.partner",
         )
         widget = self.get_widget(
             w_name,
@@ -108,7 +129,9 @@ class TestWidgetM2O(TestWidgetCase):
 
     def test_widget_many2one_multi_load(self):
         w_name, w_field = fake_field(
-            "m2o_field", type="many2one", relation="res.partner",
+            "m2o_field",
+            type="many2one",
+            relation="res.partner",
         )
         widget = self.get_widget(
             w_name,
@@ -125,7 +148,9 @@ class TestWidgetM2O(TestWidgetCase):
 
     def test_widget_many2one_multi_extract(self):
         w_name, w_field = fake_field(
-            "m2o_field", type="many2one", relation="res.partner",
+            "m2o_field",
+            type="many2one",
+            relation="res.partner",
         )
         widget = self.get_widget(
             w_name,
