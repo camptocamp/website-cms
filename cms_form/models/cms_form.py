@@ -1,11 +1,10 @@
 # Copyright 2017 Simone Orsi
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
-import contextlib
 
 import psycopg2 as pg
 
-from odoo import _, api, exceptions, fields, models
+from odoo import _, exceptions, fields, models
 
 from .fields import Serialized
 
@@ -180,6 +179,8 @@ class CMSForm(models.AbstractModel):
     def form_process_POST(self, render_values):
         """Process POST requests."""
         errors, errors_message = self.form_validate()
+        # Do not flush to keep the caches of current in memory objects
+        savepoint = self.env.cr.savepoint(flush=False)
         if not errors:
             try:
                 self.form_create_or_update()
@@ -206,7 +207,7 @@ class CMSForm(models.AbstractModel):
                 errors_message["_integrity"] = "<br />".join(
                     [x for x in str(err).split("\n") if x.strip()]
                 )
-
+        savepoint.rollback()
         # TODO: how to handle validation error on create?
         # If you use @api.constrains to validate fields' value
         # the check happens only AFTER the record has been created.
@@ -224,27 +225,11 @@ class CMSForm(models.AbstractModel):
         if orm_error:
             msg = errors_message.get("_validation") or errors_message.get("_integrity")
             if msg:
-                with self.new_env_self() as new_self:
-                    new_self.add_status_message(
-                        msg, kind="danger", title=None, dismissible=False
-                    )
+                self.add_status_message(
+                    msg, kind="danger", title=None, dismissible=False
+                )
         render_values.update({"errors": errors, "errors_message": errors_message})
         return render_values
 
     def add_status_message(self, msg, **kw):
         self.env["ir.http"].add_status_message(msg, request=self.o_request, **kw)
-
-    @contextlib.contextmanager
-    def new_env_self(self):
-        """Init a new env w/ new cursor for current form.
-
-        Careful: only the request attribute is propagated for now
-        since the new env will have an empty cache apart from the request
-        """
-        with contextlib.closing(self.env.registry.cursor()) as cr:
-            new_env = api.Environment(cr, self.env.uid, self.env.context)
-            new_self = self.with_env(new_env)
-            self.request.env = new_env
-            new_self.request = self.request
-            new_self.o_request = self.o_request
-            yield new_self
