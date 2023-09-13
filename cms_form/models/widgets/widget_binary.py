@@ -5,7 +5,7 @@ import base64
 
 import werkzeug
 
-from odoo import models
+from odoo import fields, models
 from odoo.tools import pycompat
 from odoo.tools.mimetypes import guess_mimetype
 
@@ -51,15 +51,15 @@ class BinaryWidget(models.AbstractModel):
         return self.form_to_binary(value, **req_values)
 
     def form_to_binary(self, value, **req_values):
-        if self.w_fname not in req_values:
+        if self.html_fname not in req_values:
             return None
         _value = False
-        keepcheck_flag = req_values.get(self.w_fname + "_keepcheck")
+        keepcheck_flag = req_values.get(self.html_fname + "_keepcheck")
         if not keepcheck_flag or keepcheck_flag == "yes":
             # no flag or flag marked as "keep current value"
             # prevent discarding image
-            req_values.pop(self.w_fname, None)
-            req_values.pop(self.w_fname + "_keepcheck", None)
+            req_values.pop(self.html_fname, None)
+            req_values.pop(self.html_fname + "_keepcheck", None)
             return None
         if value:
             if hasattr(value, "read"):
@@ -74,7 +74,7 @@ class BinaryWidget(models.AbstractModel):
     def w_check_empty_value(self, value, **req_values):
         if isinstance(value, werkzeug.datastructures.FileStorage):
             has_value = bool(value.filename)
-            keep_flag = req_values.get(self.w_fname + "_keepcheck")
+            keep_flag = req_values.get(self.html_fname + "_keepcheck")
             if not has_value and keep_flag == "yes":
                 # no value, but we want to preserve existing one
                 return False
@@ -89,4 +89,5 @@ class ImageWidget(models.AbstractModel):
     _name = "cms.form.widget.image"
     _inherit = "cms.form.widget.binary.mixin"
     _description = "CMS Form image widget"
-    _w_template = "cms_form.field_widget_image"
+
+    w_template = fields.Char(default="cms_form.field_widget_image")
