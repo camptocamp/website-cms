@@ -6,8 +6,11 @@ from .common import TestWidgetCase, fake_field, fake_form
 class TestWidgetBoolean(TestWidgetCase):
     def _get_widget(self, field_value=False):
         """Initialize form w/ given value and return the widget."""
-        form = fake_form(a_boolean_field=field_value)
-        w_name, w_field = fake_field("a_boolean_field", type="boolean",)
+        form = fake_form(self.env, a_boolean_field=field_value)
+        w_name, w_field = fake_field(
+            "a_boolean_field",
+            type="boolean",
+        )
         return self.get_widget(
             w_name, w_field, form=form, widget_model="cms.form.widget.boolean"
         )
