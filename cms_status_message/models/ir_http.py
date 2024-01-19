@@ -105,3 +105,17 @@ class IrHttp(models.AbstractModel):
         if session:
             return session.pop("status_message", [])
         return []
+
+    @api.model
+    def clear_status_messages(self, session=None):
+        """Clear status messages from current session.
+
+        :param session: odoo http session.
+        By default is taken from the current request.
+
+        :rtype: list.
+        """
+        session = session or http.request.session
+        if session:
+            session["status_message"] = []
+        return session["status_message"]
